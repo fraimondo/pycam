@@ -19,6 +19,7 @@ import openvoronoi
 
 from pycam.Geometry import epsilon
 import pycam.Geometry.Model
+from pycam.Geometry.utils import get_angle_pi, get_points_of_arc
 from pycam.Geometry.Line import Line
 import pycam.Geometry.Polygon
 import pycam.Utils.log
@@ -97,6 +98,7 @@ def _offset_loops_to_polygons(offset_loops):
         lines = []
         _log.info("loop #%d has %d lines/arcs", n_loop, len(loop))
         for n_segment, item in enumerate(loop):
+            _log.info("%d -> %s", n_segment, item)
             point, radius = item[:2]
             point = (point.x, point.y, 0.0)
             if before is not None:
@@ -105,17 +107,17 @@ def _offset_loops_to_polygons(offset_loops):
                     _log.info("%d line %s to %s", n_segment, before, point)
                 else:
                     _log.info("%d arc %s to %s r=%f", n_segment, before, point, radius)
-                    center, clock_wise = item[2:]
+                    center, clock_wise = item[2:4]
                     center = (center.x, center.y, 0.0)
                     direction_before = (before[0] - center[0], before[1] - center[1], 0.0)
                     direction_end = (point[0] - center[0], point[1] - center[1], 0.0)
-                    angles = [180.0 * pycam.Geometry.get_angle_pi((1.0, 0.0, 0.0), (0, 0.0, 0.0),
+                    angles = [180.0 * get_angle_pi((1.0, 0.0, 0.0), (0, 0.0, 0.0),
                                                                   direction, (0.0, 0.0, 1.0),
                                                                   pi_factor=True)
                               for direction in (direction_before, direction_end)]
                     if clock_wise:
                         angles.reverse()
-                    points = pycam.Geometry.get_points_of_arc(center, radius, angles[0], angles[1])
+                    points = get_points_of_arc(center, radius, angles[0], angles[1])
                     last_p = before
                     for p in points:
                         lines.append(Line(last_p, p))

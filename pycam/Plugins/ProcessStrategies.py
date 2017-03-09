@@ -121,7 +121,8 @@ class ProcessStrategySurfacing(pycam.Plugins.PluginBase):
 class ProcessStrategyEngraving(pycam.Plugins.PluginBase):
 
     DEPENDS = ["ParameterGroupManager", "PathParamStepDown", "PathParamMillingStyle",
-               "PathParamRadiusCompensation", "PathParamTraceModel", "PathParamPocketingType"]
+               "PathParamRadiusCompensation", "PathParamEngravingOffset",
+               "PathParamTraceModel", "PathParamPocketingType"]
     CATEGORIES = ["Process"]
 
     def setup(self):
@@ -129,6 +130,7 @@ class ProcessStrategyEngraving(pycam.Plugins.PluginBase):
                       "milling_style": pycam.Toolpath.MotionGrid.MILLING_STYLE_IGNORE,
                       "radius_compensation": False,
                       "trace_models": [],
+                      "engrave_offset": 0,
                       "pocketing_type": pycam.Toolpath.MotionGrid.POCKETING_TYPE_NONE}
         self.core.get("register_parameter_set")("process", "engraving", "Engraving",
                                                 self.run_process, parameters=parameters, weight=80)
@@ -149,7 +151,7 @@ class ProcessStrategyEngraving(pycam.Plugins.PluginBase):
             progress.update(text="Offsetting models")
             progress.set_multiple(len(models), "Model")
             for index in range(len(models)):
-                models[index] = models[index].get_offset_model(tool_radius,
+                models[index] = models[index].get_offset_model(process["parameters"]["engrave_offset"],
                                                                callback=progress.update)
                 progress.update_multiple()
             progress.finish()

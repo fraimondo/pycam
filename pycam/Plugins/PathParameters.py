@@ -65,6 +65,24 @@ class PathParamStepDown(pycam.Plugins.PluginBase):
         self.core.unregister_ui("process_path_parameters", self.control.get_widget())
         self.core.get("unregister_parameter")("process", "step_down")
 
+class PathParamEngravingOffset(pycam.Plugins.PluginBase):
+
+    DEPENDS = ["Processes"]
+    CATEGORIES = ["Process", "Parameter"]
+
+    def setup(self):
+        self.control = pycam.Gui.ControlsGTK.InputNumber(
+            lower=-10, digits=2, start=0,
+            change_handler=lambda widget=None: self.core.emit_event("process-changed"))
+        self.core.get("register_parameter")("process", "engrave_offset", self.control)
+        self.core.register_ui("process_path_parameters", "Engraving Offset", self.control.get_widget(),
+                              weight=20)
+        return True
+
+    def teardown(self):
+        self.core.unregister_ui("process_path_parameters", self.control.get_widget())
+        self.core.get("unregister_parameter")("process", "engraving_offset")
+
 
 class PathParamMaterialAllowance(pycam.Plugins.PluginBase):
 
