@@ -90,8 +90,8 @@ class ToolpathGrid(pycam.Plugins.PluginBase):
         for toolpath in toolpaths:
             # start with a copy of the original
             new_path = toolpath | Filters.Copy()
-            for x in range(x_count):
-                for y in range(y_count):
+            for x in range(1, x_count):
+                for y in range(1, y_count):
                     shift_matrix = (
                         (1, 0, 0, x * (x_space + x_dim)),
                         (0, 1, 0, y * (y_space + y_dim)),
