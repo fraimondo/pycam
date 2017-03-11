@@ -102,5 +102,6 @@ class ToolpathGrid(pycam.Plugins.PluginBase):
                 toolpath.path = new_path
                 self.core.emit_event("toolpath-changed")
             else:
-                self.core.get("toolpaths").add_new((new_path, toolpath.filters))
+                self.core.get("toolpaths").add_new((new_path, toolpath.tool,
+                                                    toolpath.filters))
         self.core.get("toolpaths").select(toolpaths)
